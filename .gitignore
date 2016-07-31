@@ -1,6 +1,7 @@
 # Local
 autossh_cfg.py
 backup_cfg.py
+kodi_cfg.py
 
 # Created by https://www.gitignore.io/api/osx,python
 
