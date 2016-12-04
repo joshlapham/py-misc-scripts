@@ -2,25 +2,31 @@
 
 from requests import post
 from json import dumps
-
-# NOTE - `kodi_cfg.py` is ignored in `.gitignore`
 import kodi_cfg as cfg
 
 HEADERS = {'content-type': 'application/json'}
 KODI_JSON_RPC_URL = "http://" + cfg.KODI_USERNAME + ":" + cfg.KODI_PASSWORD + "@" + cfg.KODI_HOST + ":" + str(cfg.KODI_PORT) + "/jsonrpc"
 
-def do_video_library_scan():
+def do_video_library_scan(logger=None):
     payload = {"jsonrpc": "2.0", "method": "VideoLibrary.Scan"}
     response = post(KODI_JSON_RPC_URL, data=dumps(payload), headers=HEADERS)
-    print(response)
     
-def do_video_library_clean():
+    if logger:
+        logger.info(response)
+    
+    return response
+        
+def do_video_library_clean(logger=None):
     payload = {"jsonrpc": "2.0", "method": "VideoLibrary.Clean"}
     response = post(KODI_JSON_RPC_URL, data=dumps(payload), headers=HEADERS)
-    print(response)
+    
+    if logger:
+        logger.info(response)
+        
+    return response
     
 if __name__ == '__main__':
-    """ Makes an API call to Kodi media center to clean and perform an update on the video library. """
+    """ Makes an API call to Kodi Media Center to clean and update the video library. """
     
     try:
         do_video_library_scan()
