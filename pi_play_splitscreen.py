@@ -6,12 +6,9 @@ import glob
 import random
 import argparse
 from logger import Logger
-import omxplayer_split_cfg as cfg
 
 LOGGER = Logger()
-
 OMXPLAYER_EXE = 'omxplayer'
-
 PROCESSES = []
 
 BASE_CLI = ['%s' % OMXPLAYER_EXE]
@@ -24,6 +21,7 @@ SQUARE_4_CLI = ['--win', '960 540 1920 1080 1080']
 def play_stream(stream_url=None, square=None):
     # TODO: finish implementing method
     
+    # TODO: this will crash if `square` is None
     CLI_TO_USE = _cli_to_use_for_square(square)
     
     if stream_url is not None:
@@ -43,7 +41,7 @@ def play_stream(stream_url=None, square=None):
         except Exception as e:
             raise Exception(e)
             
-def play_random_videos(parent_dir, all_videos, square=None, muted=True):
+def play_random_videos(video_files, square=None, muted=True):
     global BASE_CLI
     global MUTED_CLI
     CLI_TO_USE = None
@@ -51,8 +49,8 @@ def play_random_videos(parent_dir, all_videos, square=None, muted=True):
     already_played = []
     
     # TODO: should this bit of logic be called outside of this method?
-    while len(already_played) != len(all_videos):
-        random_video_filepath = random.choice(all_videos)
+    while len(already_played) != len(video_files):
+        random_video_filepath = random.choice(video_files)
         
         found_unplayed = False
         
@@ -60,17 +58,23 @@ def play_random_videos(parent_dir, all_videos, square=None, muted=True):
             if random_video_filepath not in already_played:
                 found_unplayed = True
             else:
-                random_video_filepath = random.choice(all_videos)
+                random_video_filepath = random.choice(video_files)
                 found_unplayed = False
                 
         CLI_TO_USE = list(BASE_CLI)
         
         # Use fullscreen if no `square` param was passed; otherwise 'squarify' playback
         if square is not None:
+            LOGGER.debug('Square: %s' % square)
+            
             square_cli = _cli_to_use_for_square(square)
+            
             for item in square_cli:
                 CLI_TO_USE.append(item)
                 
+        else:
+            LOGGER.debug('Using fullscreen')
+            
         # Mute/unmute audio
         if muted is not False:
             for item in MUTED_CLI:
@@ -125,75 +129,45 @@ def _kill_running_processes():
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description="Play videos in a square layout using `omxplayer` on a Raspberry Pi")
     args.add_argument("--square", help="Which square to play video in (1-4)", required=False)
+    args.add_argument("--stream-url", required=False)    
+    args.add_argument("--shows", required=False)
+    args.add_argument("--parent-dir", required=False)
     
     # TODO: add arg for `loop` -- play video files again once all have been played
     
-    # TODO: these shouldn't be hardcoded, we should take a `parent_dir` arg or something, and allow for `path_to_glob`
-    args.add_argument("--music-videos", action="store_true")
-    args.add_argument("--random-cartoons", action="store_true")
-    args.add_argument("--random-shows", action="store_true")
-    args.add_argument("--nba-games", action="store_true")
-    args.add_argument("--funny-videos", action="store_true")
-    
-    args.add_argument("--stream-url", required=False)
-    
     args = args.parse_args()
     
+    # If `shows` arg was specified, then glob needs to allow for subdirectories
+    glob_to_use = None
+    if args.shows is not None:
+        glob_to_use = '*/*[.mp4, .flv, .mkv, .avi]'
+    else:
+        glob_to_use = '*[.mp4, .flv, .mkv, .avi]'
+            
     try:
-        square_to_use = args.square
-        
-        if args.music_videos is True:
-            # TODO: this should be arg, not hardcoded
-            parent_dir = cfg.MUSIC_VIDEOS_PARENT_DIR
+        if args.shows is not None:
+            # TODO: this logic needs rethinking. Right now we choose a random show only once at the start, then play random episodes from that show. We need to loop and keep choosing a random show; but also allow for episodes to not be played again. Maybe this logic could be in `play_random_videos` method? So we'd loop over random shows, then within that method we'd choose a random episode. Alternatively, we load ALL episodes from `tv_shows_to_choose_from`, then randomize.
             
-            # TODO: `path_to_glob` variables alternate between a prefix of '*/*' or '*' before the [] brackets; if we have array of shows/subdirs passed as arg then need to switch to use '*/*'
-            path_to_glob = os.path.join(parent_dir, '*[.mp4, .flv, .mkv, .avi]')
-            
-            all_music_videos = glob.glob(path_to_glob)
-            LOGGER.debug('Music videos: %i' % len(all_music_videos))
-            
-            # TODO: use `muted` arg here (add param to `play_random_videos` method)
-            play_random_videos(parent_dir, all_music_videos, square=square_to_use)
-            
-        elif args.random_cartoons is True:
-            # TODO: need to choose another random TV show; or pass args for option to do this
-            # TODO: this logic needs rethinking
-            # Right now we choose a random show only once at the start, then play random episodes from that show
-            tv_shows_to_choose_from = cfg.CARTOONS_TO_CHOOSE_FROM
+            tv_shows_to_choose_from = args.shows.split(', ')
             random_tv_show_choice = random.choice(tv_shows_to_choose_from)
+            LOGGER.debug(random_tv_show_choice)
             
-            parent_dir = ('%s/%s' % (cfg.TV_SHOWS_PARENT_DIR, random_tv_show_choice))
-            path_to_glob = os.path.join(parent_dir, '*/*[.mp4, .flv, .mkv, .avi]')
-            all_eps_of_random_tv_show = glob.glob(path_to_glob)
-            LOGGER.debug('Cartoons: %i' % len(all_eps_of_random_tv_show))
-            play_random_videos(parent_dir, all_eps_of_random_tv_show, square=square_to_use)
-            
-        elif args.random_shows is True:
-            tv_shows_to_choose_from = cfg.TV_SHOWS_TO_CHOOSE_FROM
-            random_tv_show_choice = random.choice(tv_shows_to_choose_from)
-            parent_dir = ('%s/%s' % (cfg.TV_SHOWS_PARENT_DIR, random_tv_show_choice))    
-            path_to_glob = os.path.join(parent_dir, '*/*[.mp4, .flv, .mkv, .avi]')
-            all_eps_of_random_tv_show = glob.glob(path_to_glob)
-            LOGGER.debug('TV Shows: %i' % len(all_eps_of_random_tv_show))
-            play_random_videos(parent_dir, all_eps_of_random_tv_show, square=square_to_use)
-            
-        elif args.nba_games is True:
-            parent_dir = cfg.NBA_PARENT_DIR  
-            path_to_glob = os.path.join(parent_dir, '*[.mp4, .flv, .mkv, .avi]')
-            nba_games = glob.glob(path_to_glob)
-            LOGGER.debug('NBA games: %i' % len(nba_games))
-            play_random_videos(parent_dir, nba_games, square=square_to_use)
-            
-        elif args.funny_videos is True:
-            parent_dir = cfg.FUNNY_VIDEOS_PARENT_DIR  
-            path_to_glob = os.path.join(parent_dir, '*[.mp4, .flv, .mkv, .avi]')
-            funny_videos = glob.glob(path_to_glob)
-            LOGGER.debug('Funny videos: %i' % len(funny_videos))
-            play_random_videos(parent_dir, funny_videos, square=square_to_use)
+            parent_dir = ('%s/%s' % (args.parent_dir, random_tv_show_choice))
+            path_to_glob = os.path.join(parent_dir, glob_to_use)
+            videos_to_play = glob.glob(path_to_glob)
+            LOGGER.debug('Videos: %i' % len(videos_to_play))
+            play_random_videos(videos_to_play, square=args.square)
             
         elif args.stream_url is not None:
             LOGGER.debug('Streaming from: %s' % args.stream_url)
-            play_stream(args.stream_url, square_to_use)
+            play_stream(args.stream_url, args.square)
+            
+        else:
+            parent_dir = args.parent_dir
+            path_to_glob = os.path.join(parent_dir, glob_to_use)
+            videos_to_play = glob.glob(path_to_glob)
+            LOGGER.debug('Videos: %i' % len(videos_to_play))
+            play_random_videos(videos_to_play, square=args.square)
             
         # Wait for all processes
         for p in PROCESSES:
@@ -211,5 +185,3 @@ if __name__ == '__main__':
         LOGGER.debug('Exception: %s' % e)
         _kill_running_processes()
         
-else:
-    pass
