@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.joshlapham.backup</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python</string>
+    <string>/Users/jl/repos/py-misc-scripts/backup.py</string>
+    <string>--files</string>
+    <string>--notify</string>
+  </array>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+      <key>Minute</key>
+      <integer>20</integer>
+      <key>Hour</key>
+      <integer>4</integer>
+  </dict>
+
+  <key>StandardErrorPath</key>
+  <string>/tmp/backup.err</string>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/backup.out</string>
+</dict>
+</plist>
