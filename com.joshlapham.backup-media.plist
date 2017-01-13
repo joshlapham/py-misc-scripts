@@ -10,17 +10,17 @@
     <string>/usr/bin/python</string>
     <string>/Users/jl/repos/py-misc-scripts/backup.py</string>
     <string>--media</string>
-    <string>--notify</string>
+    <string>--update-kodi</string>
   </array>
 
   <key>RunAtLoad</key>
-  <false/>
+  <true/>
 
   <key>StartInterval</key>
   <integer>3600</integer>
 
   <key>KeepAlive</key>
-  <true/>
+  <false/>
 
   <key>StandardErrorPath</key>
   <string>/tmp/backup-media.err</string>

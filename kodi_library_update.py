@@ -4,11 +4,11 @@ from requests import post
 from json import dumps
 import kodi_cfg as cfg
 
-HEADERS = {'content-type': 'application/json'}
+HEADERS = {'Content-Type': 'application/json'}
 KODI_JSON_RPC_URL = "http://" + cfg.KODI_USERNAME + ":" + cfg.KODI_PASSWORD + "@" + cfg.KODI_HOST + ":" + str(cfg.KODI_PORT) + "/jsonrpc"
 
 def do_video_library_scan(logger=None):
-    payload = {"jsonrpc": cfg.KODI_JSON_RPC_VERSION, "method": "VideoLibrary.Scan"}
+    payload = {"jsonrpc": cfg.KODI_JSON_RPC_VERSION, "method": "VideoLibrary.Scan", "id": "mybash"}
     response = post(KODI_JSON_RPC_URL, data=dumps(payload), headers=HEADERS)
     
     if logger:
@@ -17,7 +17,7 @@ def do_video_library_scan(logger=None):
     return response
         
 def do_video_library_clean(logger=None):
-    payload = {"jsonrpc": cfg.KODI_JSON_RPC_VERSION, "method": "VideoLibrary.Clean"}
+    payload = {"jsonrpc": cfg.KODI_JSON_RPC_VERSION, "method": "VideoLibrary.Clean", "id": "mybash"}
     response = post(KODI_JSON_RPC_URL, data=dumps(payload), headers=HEADERS)
     
     if logger:
@@ -34,4 +34,3 @@ if __name__ == '__main__':
         
     except Exception as e:
         print "Error : %s" % e
-         
