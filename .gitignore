@@ -2,6 +2,7 @@
 *_cfg.py
 output/
 */env
+*.swp
 client_secrets.json
 youtube.py-oauth2.json
 
