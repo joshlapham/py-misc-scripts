@@ -34,7 +34,7 @@ def _backup(target, destination, preserve_timestamps=True):
         "rsync",
         "%s" % options_to_use,
         "--exclude", ".DocumentRevisions-V100", "--exclude", ".Trashes",
-        "--delete-after",
+        "--delete-before",
         "%s" % target,
         "%s" % destination,
     ]
