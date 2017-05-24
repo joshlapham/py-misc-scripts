@@ -83,7 +83,7 @@ def do_backup(args):
                 _notify("Backup Complete", "Backup from %s to %s completed" % (cfg.MEDIA_HD_TV_TARGET, cfg.MEDIA_HD_TV_DESTINATION))
                 
             if args.update_kodi:
-                _kodi_library_update(clean=True)
+                _kodi_library_update(clean=args.clean)
                 logger.info("Sent update command to Kodi Media Library")
                 
         except Exception as e:
@@ -119,6 +119,7 @@ if __name__ == '__main__':
     group.add_argument("--media", help="Do backup of Media HD", action="store_true")
     args.add_argument("--notify", help="Send notifications", action="store_true")
     args.add_argument("--update-kodi", help="Update Kodi Media Library", action="store_true")
+    args.add_argument("--clean", help="Make API call to clean the video library", action="store_true")
     args = args.parse_args()
     
     if args.notify:
