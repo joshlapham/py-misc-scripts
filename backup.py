@@ -16,12 +16,14 @@ def _notify(event_text, description_text):
     thread = Thread(target=post_to_prowl, args=[cfg.PROWL_TITLE, event_text, description_text])
     thread.start()
     
-def _kodi_library_update():
+def _kodi_library_update(clean=False):
     update_thread = Thread(target=do_video_library_scan)
-    clean_thread = Thread(target=do_video_library_clean)
     update_thread.start()
-    clean_thread.start()
     
+    if clean is True:
+        clean_thread = Thread(target=do_video_library_clean)
+        clean_thread.start()
+        
 def _backup(target, destination, preserve_timestamps=True):
     ignore_timestamps_options = '-rltDvPhz'
     normal_options = '-avPhz'
@@ -81,7 +83,7 @@ def do_backup(args):
                 _notify("Backup Complete", "Backup from %s to %s completed" % (cfg.MEDIA_HD_TV_TARGET, cfg.MEDIA_HD_TV_DESTINATION))
                 
             if args.update_kodi:
-                _kodi_library_update()
+                _kodi_library_update(clean=True)
                 logger.info("Sent update command to Kodi Media Library")
                 
         except Exception as e:
