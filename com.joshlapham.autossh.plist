@@ -8,7 +8,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/usr/bin/python</string>
-    <string>/Users/jl/repos/py-misc-scripts/start_autossh.py</string>
+    <string>/Users/jl/launchctl/start_autossh.py</string>
   </array>
 
   <key>RunAtLoad</key>

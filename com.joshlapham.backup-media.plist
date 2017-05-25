@@ -8,7 +8,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/usr/bin/python</string>
-    <string>/Users/jl/repos/py-misc-scripts/backup.py</string>
+    <string>/Users/jl/launchctl/backup.py</string>
     <string>--media</string>
     <string>--update-kodi</string>
   </array>

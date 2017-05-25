@@ -7,13 +7,10 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/jl/repos/py-misc-scripts/env/bin/python</string>
-    <string>/Users/jl/repos/py-misc-scripts/kodi_library_update.py</string>
+    <string>/usr/bin/python</string>
+    <string>/Users/jl/launchctl/kodi_library_update.py</string>
     <string>--clean</string>
   </array>
-
-  <key>WorkingDirectory</key>
-  <string>/Users/jl/repos/py-misc-scripts</string>
 
   <key>RunAtLoad</key>
   <false/>
