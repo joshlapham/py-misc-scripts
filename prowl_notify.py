@@ -26,5 +26,5 @@ if __name__ == '__main__':
         post_to_prowl(args.app, args.event, args.description)
         
     except Exception as e:
-        print e
+        print(e)
         
