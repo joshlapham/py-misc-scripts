@@ -35,7 +35,11 @@ def _open_in_vlc(playlist_path):
     return p
             
 def _search_video_files(parent_dir):
-    path_to_glob = path.join(parent_dir, '*/*[.mp4, .flv, .mkv]')
+    # TODO: review this line
+    # For subdirectories
+    # path_to_glob = path.join(parent_dir, '*/*[.mp4, .flv, .mkv]')
+    # For parent only
+    path_to_glob = path.join(parent_dir, '*[.mp4, .flv, .mkv]')
     results = glob(path_to_glob)
     return results
     
