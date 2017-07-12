@@ -1,27 +1,28 @@
 #!/usr/bin/python3
 
-from subprocess import check_output, CalledProcessError
-from datetime import datetime
-import threading
+import sys
 import time
+import subprocess
+import datetime
+import threading
+import argparse
 import logger
 import prowl_notify
-import argparse
 
-# TODO: add `notify` method to `prowl_notify` module?
+# TODO: add `notify` method to `prowl_notify` module? it is used by multiple scripts now
 def _notify(event_text, description_text, logger):
    logger.info("Posting notification to Prowl")
    thread = threading.Thread(target=prowl_notify.post_to_prowl, args=["jFake", event_text, description_text])
    thread.start()
-    
+   
 def _check_disk_space_for_path(path):
     cli = [
         'df',
         '-h',
-        '%s' % path
+        '{}'.format(path)
     ]
     
-    output = check_output(cli)
+    output = subprocess.check_output(cli)
     space_used = output.split()[12]
     space_available = output.split()[13]
     drive_capacity = output.split()[14]
@@ -29,15 +30,13 @@ def _check_disk_space_for_path(path):
     
 def main(path, send_notification, logger):
     used, available, capacity = _check_disk_space_for_path(path)
-    msg = "Used: %s\nAvailable: %s\nCapacity: %s" % (used, available, capacity)
+    msg = "Used: {}\nAvailable: {}\nCapacity: {}".format(used, available, capacity)
     logger.info(msg.split())
     
-    # TODO: refactor this to a 'notify' method or something
-    # Testing only
     if send_notification is True:
-        now = datetime.now()
-        msg_with_time = "%s\nTime: %s" % (msg, now.time())
-        _notify("%s - Disk Usage" % path, msg_with_time)
+        now = datetime.datetime.now()
+        msg_with_time = "{}\nTime: {}".format(msg, now.time())
+        _notify("{} - Disk Usage".format(path), msg_with_time, logger)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -57,13 +56,13 @@ if __name__ == '__main__':
             # TODO: `sleep` won't be called if there is an error; creates endless loop
             time.sleep(TIME_TO_WAIT)
             
-        except KeyboardInterrupt:
-            exit("User aborted script")
-            
-        except CalledProcessError as e:
-            logger.error("Error calling command: %s" % e)
+        except subprocess.CalledProcessError as e:
+            logger.error("Error calling command: {}".format(e))
             time.sleep(TIME_TO_WAIT)
             
-        except:
-            exit("Something went wrong")
+        except KeyboardInterrupt:
+            sys.exit("User aborted script")
+            
+        except Exception as e:
+            sys.exit("Error: {}".format(e))
             
