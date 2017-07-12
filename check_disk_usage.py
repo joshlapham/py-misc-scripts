@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from subprocess import check_output, CalledProcessError
 from threading import Thread
@@ -43,7 +43,6 @@ def main():
     
 if __name__ == '__main__':
     # TODO: testing only -- refactor logic to some sort of script that can do commands and post to prowl at certain intervals
-    # TODO: refactor to use python3
     
     # NOTE - 15mins
     TIME_TO_WAIT = 900
@@ -59,6 +58,7 @@ if __name__ == '__main__':
             
         except CalledProcessError as e:
             logger.error("Error calling command: %s" % e)
+            sleep(TIME_TO_WAIT)
             
         except:
             exit("Something went wrong")
