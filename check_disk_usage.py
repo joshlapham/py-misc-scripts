@@ -8,11 +8,8 @@ import logger
 import prowl_notify
 import argparse
 
-# TODO: don't use global for `logger`; use DI
-logger = logger.Logger()
-
 # TODO: add `notify` method to `prowl_notify` module?
-def _notify(event_text, description_text):
+def _notify(event_text, description_text, logger):
    logger.info("Posting notification to Prowl")
    thread = threading.Thread(target=prowl_notify.post_to_prowl, args=["jFake", event_text, description_text])
    thread.start()
@@ -30,7 +27,7 @@ def _check_disk_space_for_path(path):
     drive_capacity = output.split()[14]
     return space_used, space_available, drive_capacity
     
-def main(path, send_notification):
+def main(path, send_notification, logger):
     used, available, capacity = _check_disk_space_for_path(path)
     msg = "Used: %s\nAvailable: %s\nCapacity: %s" % (used, available, capacity)
     logger.info(msg.split())
@@ -48,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('--notify', help='Send notification with disk usage results', required=False, action='store_true', default=False)
     args = parser.parse_args()
     
-    # TODO: testing only -- refactor logic to some sort of script that can do commands and post to prowl at certain intervals
+    logger = logger.Logger()
     
     # NOTE - 15mins
     # TODO: add optional arg for `TIME_TO_WAIT`, although there should be a default value
@@ -56,7 +53,7 @@ if __name__ == '__main__':
     
     while True:
         try:
-            main(args.path, args.notify)
+            main(args.path, args.notify, logger)
             # TODO: `sleep` won't be called if there is an error; creates endless loop
             time.sleep(TIME_TO_WAIT)
             
