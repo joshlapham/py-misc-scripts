@@ -4,17 +4,17 @@ from subprocess import check_output, CalledProcessError
 from threading import Thread
 from datetime import datetime
 from time import sleep
-from prowl_notify import post_to_prowl
+#from prowl_notify import post_to_prowl
 from logger import Logger
 
 # TODO: don't use global for `logger`; use DI
 logger = Logger()
 
 # TODO: testing only -- add `notify` method to `prowl_notify` module?
-def _notify(event_text, description_text):
-    logger.info("Posting notification to Prowl")
-    thread = Thread(target=post_to_prowl, args=["jFake", event_text, description_text])
-    thread.start()
+#def _notify(event_text, description_text):
+#    logger.info("Posting notification to Prowl")
+#    thread = Thread(target=post_to_prowl, args=["jFake", event_text, description_text])
+#    thread.start()
     
 def _check_disk_space_for_path(path):
     cli = [
@@ -39,7 +39,7 @@ def main():
     # Testing only
     now = datetime.now()
     msg_with_time = "%s\nTime: %s" % (msg, now.time())
-    _notify("%s - Disk Usage" % path, msg_with_time)
+    #_notify("%s - Disk Usage" % path, msg_with_time)
     
 if __name__ == '__main__':
     # TODO: testing only -- refactor logic to some sort of script that can do commands and post to prowl at certain intervals
