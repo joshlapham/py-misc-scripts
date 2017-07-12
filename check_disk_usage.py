@@ -9,10 +9,9 @@ import argparse
 import logger
 import prowl_notify
 
-# TODO: add `notify` method to `prowl_notify` module? it is used by multiple scripts now
 def _notify(event_text, description_text, logger):
    logger.info("Posting notification to Prowl")
-   thread = threading.Thread(target=prowl_notify.post_to_prowl, args=["jFake", event_text, description_text])
+   thread = threading.Thread(target=prowl_notify.post_to_prowl, args=['jFake', event_text, description_text])
    thread.start()
    
 def _check_disk_space_for_path(path):
@@ -26,6 +25,7 @@ def _check_disk_space_for_path(path):
     space_used = output.split()[12]
     space_available = output.split()[13]
     drive_capacity = output.split()[14]
+    
     return space_used, space_available, drive_capacity
     
 def main(path, send_notification, logger):
@@ -53,7 +53,6 @@ if __name__ == '__main__':
     while True:
         try:
             main(args.path, args.notify, logger)
-            # TODO: `sleep` won't be called if there is an error; creates endless loop
             time.sleep(TIME_TO_WAIT)
             
         except subprocess.CalledProcessError as e:
