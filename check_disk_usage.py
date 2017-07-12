@@ -6,6 +6,7 @@ from datetime import datetime
 from time import sleep
 #from prowl_notify import post_to_prowl
 from logger import Logger
+import argparse
 
 # TODO: don't use global for `logger`; use DI
 logger = Logger()
@@ -29,27 +30,33 @@ def _check_disk_space_for_path(path):
     drive_capacity = output.split()[14]
     return space_used, space_available, drive_capacity
     
-def main():
+def main(path):
     # TODO: don't harcode `path`
-    path = "/Volumes/Media 1"
+    # path = "/Volumes/Media 1"
     used, available, capacity = _check_disk_space_for_path(path)
     msg = "Used: %s\nAvailable: %s\nCapacity: %s" % (used, available, capacity)
     logger.info(msg.split())
     
+    # TODO: refactor this to a 'notify' method or something
     # Testing only
-    now = datetime.now()
-    msg_with_time = "%s\nTime: %s" % (msg, now.time())
-    #_notify("%s - Disk Usage" % path, msg_with_time)
+    # now = datetime.now()
+    # msg_with_time = "%s\nTime: %s" % (msg, now.time())
+    # _notify("%s - Disk Usage" % path, msg_with_time)
     
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--path', help='Path to check disk usage for', required=True)
+    args = parser.parse_args()
+    
     # TODO: testing only -- refactor logic to some sort of script that can do commands and post to prowl at certain intervals
     
     # NOTE - 15mins
+    # TODO: add optional arg for `TIME_TO_WAIT`, although there should be a default value
     TIME_TO_WAIT = 900
     
     while True:
         try:
-            main()
+            main(args.path)
             # TODO: `sleep` won't be called if there is an error; creates endless loop
             sleep(TIME_TO_WAIT)
             
