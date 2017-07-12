@@ -8,28 +8,22 @@ import argparse
 
 FFMPEG_EXE = '/usr/local/bin/ffmpeg'
 
-# TODO: use DI for logger
-LOGGER = logger.Logger()
-
 def _do_timelapse(file, output_file):
-    # TODO: form CLI string to turn a video file into a timelapse video
+    # TODO: turn a video file into a timelapse video
     pass
 
 def _do_archive():
-    # TODO: parse files that are older than a certain amount of days
+    # TODO: join all videos for given `date` / older than a certain amount of days
     # TODO: convert files to lower bitrate and quality
     # TODO: concatenate files into one video file
     pass
 
-def _do_join(date):
-    # TODO: parse files for given `date`
-    # TODO: form CLI string for list of files
-    pass
-
-def _do_record(stream_url, output_path):
+def _do_record(stream_url, output_path, logger):
     filename = "{}.mp4".format(time.strftime("%Y%m%d-%H%M%S"))
 
-    LOGGER.info('Recording to file {}'.format(filename))
+    logger.info('Recording to file {}'.format(filename))
+
+    # TODO: use arg for `900` value in `CLI`
 
     CLI = [
         '{}'.format(FFMPEG_EXE),
@@ -45,10 +39,10 @@ def _do_record(stream_url, output_path):
         p = subprocess.Popen(CLI, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
 
-        LOGGER.info('Finished recording to file {}'.format(filename))
+        logger.info('Finished recording to file {}'.format(filename))
 
     except subprocess.CalledProcessError as e:
-        LOGGER.info(e)
+        logger.info(e)
 
     except Exception as e:
         # TODO: might just need to call `raise` without the `e`?
@@ -66,11 +60,13 @@ if __name__ == "__main__":
     # rtsp://192.168.1.38:554/onvif1
     # /Volumes/Media/ip_camera
 
+    logger = logger.Logger()
+
     try:
-        _do_record()
+        _do_record(args.stream_url, args.output_path, logger)
 
     except KeyboardInterrupt:
         sys.exit('User aborted script execution')
 
     except Exception as e:
-        LOGGER.info('Exception: {}'.format(e))
+        logger.info('Exception: {}'.format(e))
