@@ -1,21 +1,21 @@
 #!/usr/bin/python3
 
 from subprocess import check_output, CalledProcessError
-from threading import Thread
 from datetime import datetime
-from time import sleep
-#from prowl_notify import post_to_prowl
-from logger import Logger
+import threading
+import time
+import logger
+import prowl_notify
 import argparse
 
 # TODO: don't use global for `logger`; use DI
-logger = Logger()
+logger = logger.Logger()
 
-# TODO: testing only -- add `notify` method to `prowl_notify` module?
-#def _notify(event_text, description_text):
-#    logger.info("Posting notification to Prowl")
-#    thread = Thread(target=post_to_prowl, args=["jFake", event_text, description_text])
-#    thread.start()
+# TODO: add `notify` method to `prowl_notify` module?
+def _notify(event_text, description_text):
+   logger.info("Posting notification to Prowl")
+   thread = threading.Thread(target=prowl_notify.post_to_prowl, args=["jFake", event_text, description_text])
+   thread.start()
     
 def _check_disk_space_for_path(path):
     cli = [
@@ -30,22 +30,22 @@ def _check_disk_space_for_path(path):
     drive_capacity = output.split()[14]
     return space_used, space_available, drive_capacity
     
-def main(path):
-    # TODO: don't harcode `path`
-    # path = "/Volumes/Media 1"
+def main(path, send_notification):
     used, available, capacity = _check_disk_space_for_path(path)
     msg = "Used: %s\nAvailable: %s\nCapacity: %s" % (used, available, capacity)
     logger.info(msg.split())
     
     # TODO: refactor this to a 'notify' method or something
     # Testing only
-    # now = datetime.now()
-    # msg_with_time = "%s\nTime: %s" % (msg, now.time())
-    # _notify("%s - Disk Usage" % path, msg_with_time)
-    
+    if send_notification is True:
+        now = datetime.now()
+        msg_with_time = "%s\nTime: %s" % (msg, now.time())
+        _notify("%s - Disk Usage" % path, msg_with_time)
+        
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', help='Path to check disk usage for', required=True)
+    parser.add_argument('--notify', help='Send notification with disk usage results', required=False, action='store_true', default=False)
     args = parser.parse_args()
     
     # TODO: testing only -- refactor logic to some sort of script that can do commands and post to prowl at certain intervals
@@ -56,16 +56,16 @@ if __name__ == '__main__':
     
     while True:
         try:
-            main(args.path)
+            main(args.path, args.notify)
             # TODO: `sleep` won't be called if there is an error; creates endless loop
-            sleep(TIME_TO_WAIT)
+            time.sleep(TIME_TO_WAIT)
             
         except KeyboardInterrupt:
             exit("User aborted script")
             
         except CalledProcessError as e:
             logger.error("Error calling command: %s" % e)
-            sleep(TIME_TO_WAIT)
+            time.sleep(TIME_TO_WAIT)
             
         except:
             exit("Something went wrong")
