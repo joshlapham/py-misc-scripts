@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 
 import subprocess
 import time
@@ -86,6 +86,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--stream-url', help='RTSP stream URL', type=str, required=True)
     parser.add_argument('--output-path', help='Path for recorded output', type=str, required=True)
+    parser.add_argument('--snapshot-only', help='Take a snapshot of the RTSP stream URL and save to JPEG file', action='store_true', required=False, default=False)
     args = parser.parse_args()
 
     # TODO: remove
@@ -95,8 +96,11 @@ if __name__ == "__main__":
     logger = logger.Logger()
 
     try:
-        _do_record(args.stream_url, args.output_path, logger)
-
+        if args.snapshot_only is True:
+            _do_frame_snapshot(args.stream_url, args.output_path, logger)
+        else:
+            _do_record(args.stream_url, args.output_path, logger)
+            
     except KeyboardInterrupt:
         sys.exit('User aborted script execution')
 
