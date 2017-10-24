@@ -9,13 +9,9 @@ import argparse
 FFMPEG_EXE = '/usr/local/bin/ffmpeg'
 
 def _do_frame_snapshot(stream_url, output_path, logger=None):
-    # TODO: take snapshot of `stream_url` using `ffmpeg`
-    # TODO: output snapshot to `output_path`
     # TODO: handle filename > use dimensions of image in name
     
     filename = "{}.jpg".format(time.strftime("%Y%m%d-%H%M%S"))
-    
-    #ffmpeg -y -i rtsp://admin:admin@192.168.10.113:554/live -vframes 1 do.jpg
     
     CLI = [
         '{}'.format(FFMPEG_EXE),
@@ -81,17 +77,11 @@ def _do_record(stream_url, output_path, logger):
 if __name__ == "__main__":
     """ Record/take pictures from an IP camera RTSP stream using `ffmpeg`. """
 
-    # TODO: handle argument for snapshots -- call `_do_frame_snapshot`
-    
     parser = argparse.ArgumentParser()
     parser.add_argument('--stream-url', help='RTSP stream URL', type=str, required=True)
     parser.add_argument('--output-path', help='Path for recorded output', type=str, required=True)
     parser.add_argument('--snapshot-only', help='Take a snapshot of the RTSP stream URL and save to JPEG file', action='store_true', required=False, default=False)
     args = parser.parse_args()
-
-    # TODO: remove
-    # rtsp://192.168.1.38:554/onvif1
-    # /Volumes/Media/ip_camera
 
     logger = logger.Logger()
 
