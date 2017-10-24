@@ -12,8 +12,31 @@ def _do_frame_snapshot(stream_url, output_path, logger=None):
     # TODO: take snapshot of `stream_url` using `ffmpeg`
     # TODO: output snapshot to `output_path`
     # TODO: handle filename > use dimensions of image in name
-    pass
     
+    filename = "{}.jpg".format(time.strftime("%Y%m%d-%H%M%S"))
+    
+    #ffmpeg -y -i rtsp://admin:admin@192.168.10.113:554/live -vframes 1 do.jpg
+    
+    CLI = [
+        '{}'.format(FFMPEG_EXE),
+        '-y',
+        '-i', '{}'.format(stream_url),
+        '-vframes', '1',
+        '{}/{}'.format(output_path, filename)
+    ]
+    
+    try:
+        p = subprocess.Popen(CLI, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p.communicate()
+
+        logger.info('Finished taking snapshot to file {}'.format(filename))
+
+    except subprocess.CalledProcessError as e:
+        logger.info(e)
+
+    except Exception as e:
+        raise Exception(e)
+        
 def _do_timelapse(file, output_file):
     # TODO: turn a video file into a timelapse video
     pass
