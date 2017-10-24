@@ -41,6 +41,8 @@ def _do_record(stream_url, output_path, logger):
         '{}/{}'.format(output_path, filename)
     ]
 
+    # TODO: if `stream_url` is not a valid stream URL, then there will be no output file -- need to do error handling
+    
     try:
         p = subprocess.Popen(CLI, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
