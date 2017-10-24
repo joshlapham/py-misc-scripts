@@ -8,6 +8,12 @@ import argparse
 
 FFMPEG_EXE = '/usr/local/bin/ffmpeg'
 
+def _do_frame_snapshot(stream_url, output_path, logger=None):
+    # TODO: take snapshot of `stream_url` using `ffmpeg`
+    # TODO: output snapshot to `output_path`
+    # TODO: handle filename > use dimensions of image in name
+    pass
+    
 def _do_timelapse(file, output_file):
     # TODO: turn a video file into a timelapse video
     pass
@@ -45,12 +51,13 @@ def _do_record(stream_url, output_path, logger):
         logger.info(e)
 
     except Exception as e:
-        # TODO: might just need to call `raise` without the `e`?
         raise Exception(e)
 
 if __name__ == "__main__":
-    """ Records RTSP stream from an IP camera using ffmpeg. """
+    """ Record/take pictures from an IP camera RTSP stream using `ffmpeg`. """
 
+    # TODO: handle argument for snapshots -- call `_do_frame_snapshot`
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('--stream-url', help='RTSP stream URL', type=str, required=True)
     parser.add_argument('--output-path', help='Path for recorded output', type=str, required=True)
