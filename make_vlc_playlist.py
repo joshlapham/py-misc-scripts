@@ -6,7 +6,9 @@ from subprocess import Popen, PIPE
 from argparse import ArgumentParser
 from logger import Logger
 
-VLC_EXE = '/Applications/VLC.app/Contents/MacOS/VLC'
+# TODO: allow for multiple OS paths (OSX & Ubuntu)
+#VLC_EXE = '/Applications/VLC.app/Contents/MacOS/VLC'
+VLC_EXE = '/usr/bin/vlc'
 
 logger = Logger()
 
@@ -71,4 +73,3 @@ if __name__ == '__main__':
         vlc_process.kill()
         logger.info("User aborted script execution")
         exit()
-        
