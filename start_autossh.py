@@ -8,13 +8,15 @@ from helpers import tprint
 import autossh_cfg as cfg
 
 CLI_START = [
-    '/usr/local/bin/autossh',
+    # TODO: allow for multiple OS paths (OSX & Ubuntu)
+    '/usr/bin/autossh',
     '-M', cfg.REMOTE_MONITOR_PORT,
     '-f',
     '-p', cfg.SSH_REMOTE_PORT, '-N', '-R', '%s:localhost:22' % cfg.REMOTE_PORT_TO_OPEN, cfg.SSH_HOST
 ]
 
 CLI_CHECK = [
+    # TODO: allow for multiple OS paths (OSX & Ubuntu)
     '/usr/bin/pgrep',
     'autossh'
 ]
@@ -49,4 +51,3 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         tprint("User aborted script")
-        
