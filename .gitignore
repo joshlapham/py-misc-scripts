@@ -5,6 +5,8 @@ output/
 *.swp
 client_secrets.json
 youtube.py-oauth2.json
+Transactions*.csv
+*.env
 
 # Created by https://www.gitignore.io/api/osx,python
 
