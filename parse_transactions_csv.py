@@ -3,6 +3,14 @@
 import csv
 import argparse
 
+def calculate_total(amounts):
+    total = 0
+    
+    for amount in amounts:
+        total += float(amount)
+        
+    return total
+
 def parse_csv_file(csv_file, transaction_name):
     """ Parses a CSV file of transactions for a given transaction name. """
     
@@ -28,6 +36,10 @@ def parse_csv_file(csv_file, transaction_name):
                 amounts.append(row[-2])
             
     print('Total amounts: {}'.format(amounts))
+    
+    total = calculate_total(amounts)
+    
+    print('Total: {}'.format(total))
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
