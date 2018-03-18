@@ -4,6 +4,8 @@ import csv
 import argparse
 
 def calculate_total(amounts):
+    """ Iterate over an array of currency strings and return total as float. """
+    
     total = 0
     
     for amount in amounts:
@@ -21,17 +23,8 @@ def parse_csv_file(csv_file, transaction_name):
     amounts = []
     
     for row in reader:
-        # print(', '.join(row))
-        # print(row[0]) # date
-        # print(row[1]) # transaction name
-        
         if transaction_name is not None:
-            # print(transaction_name)
-            # print(row[1])
-            # print('Transaction name: {}; row: {}'.format(transaction_name, row[1]))
-            # TODO: parse `row` for `transaction_name` value
-            # print(transaction_name in row)
-            # if str(transaction_name) in str(row[1]) is True:
+            # Parse `row` for `transaction_name` value
             if transaction_name in row[1]:
                 print('Transaction: {}'.format(row))
                 print('Amount: {}'.format(row[-2]))
@@ -51,7 +44,6 @@ if __name__ == '__main__':
     
     try:
         with open(args.csv_filepath, 'r') as csv_file:
-            # TODO: update `transaction_name` arg passed here
             parse_csv_file(csv_file, args.transaction_name)
             
     except Exception as e:
