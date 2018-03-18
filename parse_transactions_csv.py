@@ -26,14 +26,10 @@ def parse_csv_file(csv_file, transaction_name, transaction_month):
         if transaction_name is not None:
             # Parse `row` for `transaction_name` value
             if transaction_name in row[1]:
-                
                 if transaction_month is not None:
                     # Parsing a `transaction_month`, only add amount if month matches
                     if transaction_month in row[0].split('/')[1]:
                         print('Matched month')
-                        # print(row[0].split('/'))
-                        # return
-                    
                         print('Transaction: {}'.format(row))
                         print('Amount: {}'.format(row[-2]))
                         amounts.append(row[-2])
@@ -50,6 +46,8 @@ def parse_csv_file(csv_file, transaction_name, transaction_month):
     print('Total: {}'.format(total))
     
 if __name__ == '__main__':
+    """ Script to parse bank transaction CSV files for certain transaction names/dates. """
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('--csv-filepath', help='Filepath to transactions CSV file', required=True)
     parser.add_argument('--transaction-name', help='Name of transaction to look for in CSV file', required=False, default=None, type=str)
