@@ -14,6 +14,8 @@ def calculate_total(amounts):
 def parse_csv_file(csv_file, transaction_name):
     """ Parses a CSV file of transactions for a given transaction name. """
     
+    # TODO: parse date ranges
+    
     reader = csv.reader(csv_file)
     
     amounts = []
