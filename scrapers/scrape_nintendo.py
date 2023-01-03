@@ -6,15 +6,15 @@ import threading
 import requests
 from bs4 import BeautifulSoup
 
-from prowl_notify import post_to_prowl
+from py_astk_common import post_to_prowl
 
 
 STR_IN_STOCK = 'In stock'
 STR_NOT_IN_STOCK = 'Out of stock'
 
 
-def _notify(event_text, description_text, prowl_title):
-    thread = threading.Thread(target=post_to_prowl, args=[prowl_title, event_text, description_text])
+def _notify(event_text, description_text, prowl_title, prowl_api_key):
+    thread = threading.Thread(target=post_to_prowl, args=[prowl_title, event_text, description_text, prowl_api_key])
     thread.start()
 
 
@@ -52,6 +52,8 @@ if __name__ == "__main__":
         item_name = os.environ['JL_ITEM_NAME']
         item_url = os.environ['JL_ITEM_URL']
 
+        prowl_api_key = os.environ['JL_PROWL_API_KEY']
+
     except KeyError as e:
         sys.exit('Environment variable not loaded: {}'.format(e))
 
@@ -67,7 +69,7 @@ if __name__ == "__main__":
             item_to_check.name, item_to_check.in_stock))
         
         if item_to_check.in_stock is True:
-            _notify('{} in stock'.format(item_to_check.name), 'Item is in stock', 'scrape_nintendo.py')
+            _notify('{} in stock'.format(item_to_check.name), 'Item is in stock', 'scrape_nintendo.py', prowl_api_key)
 
     except Exception as e:
         print('Exception when parsing page: {}'.format(e))
